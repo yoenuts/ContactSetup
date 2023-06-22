@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ContactFXMLController">
+   <children>
+      <TextField fx:id="fNameTF" layoutX="94.0" layoutY="45.0" />
+      <TextField fx:id="lNameTF" layoutX="94.0" layoutY="75.0" />
+      <TextField fx:id="contactTF" layoutX="94.0" layoutY="113.0" />
+      <Label layoutX="23.0" layoutY="49.0" text="First Name:" />
+      <Label layoutX="24.0" layoutY="79.0" text="Last Name:" />
+      <TableView layoutX="17.0" layoutY="171.0" prefHeight="200.0" prefWidth="567.0">
+        <columns>
+          <TableColumn fx:id="personIDColumn" prefWidth="79.0" text="ID" />
+          <TableColumn fx:id="firstNameColumn" prefWidth="71.0" text="First Name" />
+            <TableColumn fx:id="lastNameColumn" prefWidth="99.0" text="Last Name" />
+            <TableColumn fx:id="contactNoColumn" prefWidth="106.0" text="Contact No." />
+            <TableColumn fx:id="dateAddedColumn" prefWidth="106.0" text="Date Added" />
+            <TableColumn fx:id="dateModifiedColumn" prefWidth="105.0" text="Date Modified" />
+        </columns>
+      </TableView>
+      <Label layoutX="39.0" layoutY="117.0" text="Contact:" />
+      <Button fx:id="addB" layoutX="337.0" layoutY="45.0" mnemonicParsing="false" onAction="#addbutton" text="ADD" />
+      <Button fx:id="updateB" layoutX="337.0" layoutY="75.0" mnemonicParsing="false" text="UPDATE" />
+      <Button fx:id="deleteB" layoutX="337.0" layoutY="105.0" mnemonicParsing="false" text="DELETE" />
+   </children>
+</AnchorPane>
