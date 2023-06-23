@@ -14,7 +14,7 @@
       <TextField fx:id="contactTF" layoutX="94.0" layoutY="113.0" />
       <Label layoutX="23.0" layoutY="49.0" text="First Name:" />
       <Label layoutX="24.0" layoutY="79.0" text="Last Name:" />
-      <TableView layoutX="17.0" layoutY="171.0" prefHeight="200.0" prefWidth="567.0">
+      <TableView fx:id="contactTable" layoutX="17.0" layoutY="171.0" onMouseClicked="#contactTableClicked" prefHeight="200.0" prefWidth="567.0">
         <columns>
           <TableColumn fx:id="personIDColumn" prefWidth="79.0" text="ID" />
           <TableColumn fx:id="firstNameColumn" prefWidth="71.0" text="First Name" />
@@ -28,5 +28,6 @@
       <Button fx:id="addB" layoutX="337.0" layoutY="45.0" mnemonicParsing="false" onAction="#addbutton" text="ADD" />
       <Button fx:id="updateB" layoutX="337.0" layoutY="75.0" mnemonicParsing="false" text="UPDATE" />
       <Button fx:id="deleteB" layoutX="337.0" layoutY="105.0" mnemonicParsing="false" text="DELETE" />
+      <TextField fx:id="cIDTF" layoutX="467.0" layoutY="63.0" prefHeight="25.0" prefWidth="70.0" />
    </children>
 </AnchorPane>

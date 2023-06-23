@@ -12,8 +12,9 @@ public class DatabaseConnection {
     
     public static Connection getDBConnection() throws SQLException {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/contacts", "yoenuts", "TnKA2b/[CG#7%X#");
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            String url = "jdbc:sqlserver://10.88.140.68:1433;databaseName=ojt_testDB;encrypt=true;trustServerCertificate=true";
+            Connection connection = DriverManager.getConnection(url, "ojt", "Init@2023");
             return connection;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
