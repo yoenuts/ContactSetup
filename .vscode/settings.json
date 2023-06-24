@@ -1,0 +1,15 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx.base.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx.controls.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx.fxml.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx.graphics.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx.media.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx.swing.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx.web.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\javafx-sdk-20.0.1\\lib\\javafx-swt.jar",
+        "c:\\Users\\le bratte\\OneDrive\\Desktop\\erlein studies uwu\\Computer Programming\\mysql-connector-j-8.0.33\\mysql-connector-j-8.0.33.jar",
+        "c:\\Program Files\\sqljdbc_12.2\\enu\\mssql-jdbc-12.2.0.jre8.jar"
+    ]
+}
