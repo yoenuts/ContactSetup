@@ -83,15 +83,89 @@ public class ContactFXMLController implements Initializable {
         loadTableRecord();
     }    
     
-    
-    
-    void loadTableRecord(){
-        
+    @FXML
+    private void contactTableClicked(MouseEvent event) {
+       Contacts contact = contactTable.getSelectionModel().getSelectedItem();
+
+       if (contact != null) {
+           int contactID = contact.getID();
+           cIDTF.setText(String.valueOf(contactID));
+
+           // Retrieve and display current week and days worked from the database
+           try {
+
+               String selectQuery = "SELECT first_name, last_name, contact_no FROM Contacts WHERE employeeID = ?";
+               pst = connection.prepareStatement(selectQuery);
+               pst.setInt(1, contactID);
+
+               rst = pst.executeQuery();
+
+               if (rst.next()) {
+                   firstN = rst.getString("first_name");
+                   lastN = rst.getString("last_name");
+                   contactN = rst.getInt("contact_no");
+                   fNameTF.setText(firstN);
+                   lNameTF.setText(lastN);
+                   contactTF.setText(String.valueOf(contactN));
+                }   
+
+               pst.close();
+               connection.close();
+           } catch (SQLException e) {
+               e.printStackTrace();
+           }
+       }
+            
     }
     
+    private void loadTableRecord(){
+        contact.clear();
+
+        String contactTableView = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts";
+
+        try {
+            statement = connection.createStatement();
+            rst = statement.executeQuery(contactTableView);
+
+            while (rst.next()) {
+                Integer queryID = rst.getInt("ID");
+                String queryLName = rst.getString("last_name");
+                String queryFName = rst.getString("first_name");
+                Integer queryContact = rst.getInt("contact_no");
+                Date queryDateCreated = rst.getDate("date_created");
+                Date queryDateModified = rst.getDate("date_modified");
+
+                contact.add(new Contacts(queryID, queryLName, queryFName, queryContact, queryDateCreated, queryDateModified));
+            }
+
+            personIDColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
+            lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("last_name"));
+            firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("first_name"));
+            contactNoColumn.setCellValueFactory(new PropertyValueFactory<>("contact_no"));
+            dateAddedColumn.setCellValueFactory(new PropertyValueFactory<>("date_created"));
+            dateModifiedColumn.setCellValueFactory(new PropertyValueFactory<>("date_modified"));
+
+            contactTable.setItems(contact);
+
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+        }
+    }
+   
+    void createDatabaseConnection(){
+        
+        try{
+            DatabaseConnection dbConnection = new DatabaseConnection();
+            connection = dbConnection.getDBConnection();
+        } catch(Exception erlein){
+            erlein.printStackTrace();
+        }
+
+    }
 
     @FXML
-    private void addbutton(ActionEvent event) {
+    private void addAction(ActionEvent event) {
         createDatabaseConnection();
         firstN = fNameTF.getText();
         lastN = lNameTF.getText();
@@ -127,57 +201,69 @@ public class ContactFXMLController implements Initializable {
             }
         }
     }
-    
-    void createDatabaseConnection(){
-        
-        try{
-            DatabaseConnection dbConnection = new DatabaseConnection();
-            connection = dbConnection.getDBConnection();
-        } catch(Exception erlein){
-            erlein.printStackTrace();
-        }
 
+    @FXML
+    private void updateAction(ActionEvent event) {
+        firstN = lNameTF.getText();
+        lastN = fNameTF.getText();
+        String sContact = contactTF.getText();
+        contactN = Integer.parseInt(sContact);
+        LocalDate modifiedDate = LocalDate.now();
+        sqlDate = Date.valueOf(modifiedDate);
+        String conID = contactTF.getText();
+        if(conID.equals("")){
+            JOptionPane.showMessageDialog(null,"Select an item from the table.");
+        }
+        else{
+            int cID = Integer.parseInt(conID);
+            try{
+                pst = connection.prepareStatement("UPDATE Contacts SET first_name = ?, last_name = ?, contact_no = ?,  date_modified = ? WHERE ID = ?");
+
+                pst.setString(1, firstN);
+                pst.setString(2, lastN);
+                pst.setInt(3, contactN);
+                pst.setDate(4, sqlDate);
+                pst.setInt(5, cID);
+                pst.executeUpdate();
+                
+                JOptionPane.showMessageDialog(null, "Record updated hihi");
+                lNameTF.setText("");
+                fNameTF.setText("");
+                contactTF.setText("");
+                cIDTF.setText("");
+
+                loadTableRecord();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+        
     }
 
     @FXML
-    private void contactTableClicked(MouseEvent event) {
-        
-    }
+    private void deleteAction(ActionEvent event) {
+        Contacts contact = contactTable.getSelectionModel().getSelectedItem();
     
-    private void loadEmployeeRecord(){
-        contact.clear();
-
-        String contactTableView = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts";
-
-        try {
-            statement = connection.createStatement();
-            rst = statement.executeQuery(contactTableView);
-
-            while (rst.next()) {
-                Integer queryID = rst.getInt("ID");
-                String queryLName = rst.getString("last_name");
-                String queryFName = rst.getString("first_name");
-                Integer queryContact = rst.getInt("contact_no");
-                Date queryDateCreated = rst.getDate("date_created");
-                Date queryDateModified = rst.getDate("date_modified");
-
-                contact.add(new Contacts(queryID, queryLName, queryFName, queryContact, queryDateCreated, queryDateModified));
-            }
-
-            personIDColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
-            lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("last_name"));
-            firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("first_name"));
-            contactNoColumn.setCellValueFactory(new PropertyValueFactory<>("contact_no"));
-            dateAddedColumn.setCellValueFactory(new PropertyValueFactory<>("date_created"));
-            dateModifiedColumn.setCellValueFactory(new PropertyValueFactory<>("date_modified"));
-
-            contactTable.setItems(contact);
-
-        } catch (SQLException e) {
+        if (contact != null) {
+            int cID = contact.getID();
+        
+            try {
             
-            e.printStackTrace();
+                PreparedStatement pst = connection.prepareStatement("DELETE FROM Contacts WHERE ID = ?");
+                pst.setInt(1, cID);
+            
+                pst.executeUpdate();
+
+                JOptionPane.showMessageDialog(null, "Record deleted successfully.");
+                pst.close();
+                connection.close();
+
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No table item selected.");
         }
     }
-   
-    
 }

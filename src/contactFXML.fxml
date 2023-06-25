@@ -25,9 +25,10 @@
         </columns>
       </TableView>
       <Label layoutX="39.0" layoutY="117.0" text="Contact:" />
-      <Button fx:id="addB" layoutX="337.0" layoutY="45.0" mnemonicParsing="false" onAction="#addbutton" text="ADD" />
-      <Button fx:id="updateB" layoutX="337.0" layoutY="75.0" mnemonicParsing="false" text="UPDATE" />
-      <Button fx:id="deleteB" layoutX="337.0" layoutY="105.0" mnemonicParsing="false" text="DELETE" />
-      <TextField fx:id="cIDTF" layoutX="467.0" layoutY="63.0" prefHeight="25.0" prefWidth="70.0" />
+      <Button fx:id="addB" layoutX="337.0" layoutY="45.0" mnemonicParsing="false" onAction="#addAction" text="ADD" />
+      <Button fx:id="updateB" layoutX="337.0" layoutY="75.0" mnemonicParsing="false" onAction="#updateAction" text="UPDATE" />
+      <Button fx:id="deleteB" layoutX="337.0" layoutY="105.0" mnemonicParsing="false" onAction="#deleteAction" text="DELETE" />
+      <TextField fx:id="cIDTF" layoutX="444.0" layoutY="75.0" prefHeight="25.0" prefWidth="70.0" />
+      <Label layoutX="451.0" layoutY="49.0" text="Contact ID" />
    </children>
 </AnchorPane>
