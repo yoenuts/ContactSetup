@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javafx.scene.control.SortEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 public class ContactFXMLController implements Initializable {
@@ -74,6 +75,10 @@ public class ContactFXMLController implements Initializable {
     private TableView<Contacts> contactTable;
     @FXML
     private TextField cIDTF;
+    @FXML
+    private TextField searchTF;
+    @FXML
+    private Button clearB;
 
     
 
@@ -94,7 +99,7 @@ public class ContactFXMLController implements Initializable {
            // Retrieve and display current week and days worked from the database
            try {
 
-               String selectQuery = "SELECT first_name, last_name, contact_no FROM Contacts WHERE employeeID = ?";
+               String selectQuery = "SELECT first_name, last_name, contact_no FROM Contacts WHERE ID = ?";
                pst = connection.prepareStatement(selectQuery);
                pst.setInt(1, contactID);
 
@@ -107,10 +112,10 @@ public class ContactFXMLController implements Initializable {
                    fNameTF.setText(firstN);
                    lNameTF.setText(lastN);
                    contactTF.setText(String.valueOf(contactN));
-                }   
-
+                }
+               
                pst.close();
-               connection.close();
+               
            } catch (SQLException e) {
                e.printStackTrace();
            }
@@ -188,14 +193,15 @@ public class ContactFXMLController implements Initializable {
                 pst.setDate(4, sqlDate);
 
                 pst.executeUpdate();
-                pst.close();
-                connection.close();
+                
 
                 fNameTF.setText("");
                 lNameTF.setText("");
                 contactTF.setText("");
 
                 JOptionPane.showMessageDialog(null, "Added Successfully");
+                loadTableRecord();
+                pst.close();
             } catch(Exception erlein){
                 erlein.printStackTrace();
             }
@@ -208,9 +214,11 @@ public class ContactFXMLController implements Initializable {
         lastN = fNameTF.getText();
         String sContact = contactTF.getText();
         contactN = Integer.parseInt(sContact);
+        
         LocalDate modifiedDate = LocalDate.now();
         sqlDate = Date.valueOf(modifiedDate);
-        String conID = contactTF.getText();
+        
+        String conID = cIDTF.getText();
         if(conID.equals("")){
             JOptionPane.showMessageDialog(null,"Select an item from the table.");
         }
@@ -225,14 +233,14 @@ public class ContactFXMLController implements Initializable {
                 pst.setDate(4, sqlDate);
                 pst.setInt(5, cID);
                 pst.executeUpdate();
-                
                 JOptionPane.showMessageDialog(null, "Record updated hihi");
                 lNameTF.setText("");
                 fNameTF.setText("");
                 contactTF.setText("");
                 cIDTF.setText("");
-
+               
                 loadTableRecord();
+                pst.close();
             } catch(SQLException e){
                 e.printStackTrace();
             }
@@ -255,9 +263,15 @@ public class ContactFXMLController implements Initializable {
                 pst.executeUpdate();
 
                 JOptionPane.showMessageDialog(null, "Record deleted successfully.");
+                lNameTF.setText("");
+                fNameTF.setText("");
+                contactTF.setText("");
+                cIDTF.setText("");
+               
+                loadTableRecord();
                 pst.close();
-                connection.close();
-
+                
+                
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -265,5 +279,20 @@ public class ContactFXMLController implements Initializable {
         } else {
             JOptionPane.showMessageDialog(null, "No table item selected.");
         }
+    }
+
+    @FXML
+    private void searchAction(KeyEvent event) {
+        
+    }
+
+
+    @FXML
+    private void clearAction(ActionEvent event) {
+        lNameTF.setText("");
+        fNameTF.setText("");
+        contactTF.setText("");
+        cIDTF.setText("");
+        
     }
 }
