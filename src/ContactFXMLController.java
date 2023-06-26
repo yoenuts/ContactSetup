@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 
 import javafx.fxml.Initializable;
 import javafx.collections.*;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,7 +30,7 @@ import javafx.scene.input.MouseEvent;
 
 public class ContactFXMLController implements Initializable {
     //list for Contact objects
-    ObservableList<Contacts> contact = FXCollections.observableArrayList();
+    private ObservableList<Contacts> contact = FXCollections.observableArrayList();
     
     //Connection
     private Connection connection;
@@ -86,6 +88,10 @@ public class ContactFXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         createDatabaseConnection();
         loadTableRecord();
+
+        
+        
+
     }    
     
     @FXML
@@ -151,6 +157,40 @@ public class ContactFXMLController implements Initializable {
             dateModifiedColumn.setCellValueFactory(new PropertyValueFactory<>("date_modified"));
 
             contactTable.setItems(contact);
+
+            //filter
+
+            FilteredList<Contacts> filteredData = new FilteredList<>(contact, b -> true);
+            searchTF.textProperty().addListener((observable, oldVal, newVal) -> {
+                filteredData.setPredicate(contact -> {
+
+                    if(newVal.isEmpty() || newVal.isBlank() || newVal == null){
+                        return true;
+                    }
+
+                    String keyword = newVal.toLowerCase();
+                    int numKey = Integer.parseInt(keyword);
+                    if(contact.getID() == numKey){
+                        return true;
+                    }
+                    else if(contact.getFirst_name().toLowerCase().indexOf(keyword) > -1){
+                        return true;
+                    }
+                    else if(contact.getLast_name().toLowerCase().indexOf(keyword) > -1){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+
+                    SortedList<Contacts> sortedContact = new SortedList<>(filteredData);
+
+                    sortedContact.comparatorProperty().bind(contactTable.comparatorProperty());
+                    
+                });
+            });
+
+            contactTable.setItems(sortedContact);
 
         } catch (SQLException e) {
             
@@ -281,10 +321,6 @@ public class ContactFXMLController implements Initializable {
         }
     }
 
-    @FXML
-    private void searchAction(KeyEvent event) {
-        
-    }
 
 
     @FXML
@@ -293,6 +329,6 @@ public class ContactFXMLController implements Initializable {
         fNameTF.setText("");
         contactTF.setText("");
         cIDTF.setText("");
-        
+     
     }
 }

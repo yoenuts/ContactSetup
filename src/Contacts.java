@@ -63,7 +63,7 @@ public class Contacts {
         return date_modified;
     }
     
-    public void setID(int cID){
+    public void setID(int ID){
         this.ID = ID;
     }
     
