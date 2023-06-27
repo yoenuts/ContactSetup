@@ -22,6 +22,7 @@ import javafx.scene.control.TextField;
 import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.SortEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -81,6 +82,8 @@ public class ContactFXMLController implements Initializable {
     private TextField searchTF;
     @FXML
     private Button clearB;
+    @FXML
+    private ComboBox<?> categoryBox;
 
     
 
@@ -334,5 +337,9 @@ public class ContactFXMLController implements Initializable {
         contactTF.setText("");
         cIDTF.setText("");
      
+    }
+
+    @FXML
+    private void categoryBoxClicked(MouseEvent event) {
     }
 }
