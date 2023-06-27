@@ -159,7 +159,8 @@ public class ContactFXMLController implements Initializable {
             contactTable.setItems(contact);
 
             //filter
-
+            //quick filter option but not advisable for large amounts of data
+            /**
             FilteredList<Contacts> filteredData = new FilteredList<>(contact, b -> true);
             searchTF.textProperty().addListener((observable, oldVal, newVal) -> {
                 filteredData.setPredicate(contact -> {
@@ -182,15 +183,18 @@ public class ContactFXMLController implements Initializable {
                     else{
                         return false;
                     }
-
-                    SortedList<Contacts> sortedContact = new SortedList<>(filteredData);
-
-                    sortedContact.comparatorProperty().bind(contactTable.comparatorProperty());
                     
                 });
             });
+            
+            SortedList<Contacts> sortedContact;
+            sortedContact = new SortedList<>(filteredData);
 
+            sortedContact.comparatorProperty().bind(contactTable.comparatorProperty());
+            
+            
             contactTable.setItems(sortedContact);
+            ***/
 
         } catch (SQLException e) {
             
