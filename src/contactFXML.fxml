@@ -27,16 +27,16 @@
         </columns>
       </TableView>
       <Label layoutX="39.0" layoutY="130.0" text="Contact:" />
-      <Button fx:id="addB" layoutX="280.0" layoutY="54.0" mnemonicParsing="false" onAction="#addAction" text="ADD" />
+      <Button fx:id="addB" layoutX="291.0" layoutY="54.0" mnemonicParsing="false" onAction="#addAction" text="ADD" />
       <Button fx:id="updateB" layoutX="282.0" layoutY="88.0" mnemonicParsing="false" onAction="#updateAction" text="UPDATE" />
       <Button fx:id="deleteB" layoutX="284.0" layoutY="126.0" mnemonicParsing="false" onAction="#deleteAction" text="DELETE" />
-      <TextField fx:id="cIDTF" layoutX="94.0" layoutY="24.0" prefHeight="25.0" prefWidth="70.0" />
+      <TextField fx:id="cIDTF" editable="false" layoutX="94.0" layoutY="24.0" prefHeight="25.0" prefWidth="70.0" />
       <Label layoutX="23.0" layoutY="28.0" text="Contact ID">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Label>
-      <TextField fx:id="searchTF" layoutX="428.0" layoutY="139.0" />
-      <Button fx:id="clearB" layoutX="169.0" layoutY="24.0" mnemonicParsing="false" onAction="#clearAction" text="CLEAR" />
-      <ComboBox fx:id="categoryBox" layoutX="428.0" layoutY="101.0" onMouseClicked="#categoryBoxClicked" prefWidth="150.0" />
+      <TextField fx:id="searchTF" layoutX="429.0" layoutY="135.0" />
+      <Button fx:id="clearB" layoutX="169.0" layoutY="24.0" mnemonicParsing="false" onAction="#clearAction" text="CLEAR ALL" />
+      <ComboBox fx:id="categoryBox" layoutX="428.0" layoutY="101.0" prefWidth="150.0" />
    </children>
 </AnchorPane>
