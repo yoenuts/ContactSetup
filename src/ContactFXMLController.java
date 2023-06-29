@@ -20,6 +20,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ComboBox;
@@ -46,10 +48,12 @@ public class ContactFXMLController implements Initializable {
     private String stringInsert;
 
     //date object
-
-    LocalDate currentDate;
-    Date sqlDate;
-
+    private LocalDate currentDate;
+    private Date sqlDate;
+     
+    //to refresh, default command 
+    
+    private String queryStatement;
     @FXML
     private TextField fNameTF;
     @FXML
@@ -83,16 +87,27 @@ public class ContactFXMLController implements Initializable {
     @FXML
     private Button clearB;
     @FXML
-    private ComboBox<?> categoryBox;
+    private ComboBox<String> categoryBox;
 
     
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //create connection
         createDatabaseConnection();
+        //refresh table
         loadTableRecord();
 
+        //populate combo box in lambda
         
+        categoryBox.setOnMouseClicked(e -> {
+            // Clear existing items in the positionComboBox
+            categoryBox.getItems().clear();
+
+            // Retrieve data from the contacts table
+            ObservableList<String> contact = FXCollections.observableArrayList("Last Name", "First Name");
+            categoryBox.setItems(contact);
+        });
         
 
     }    
@@ -123,7 +138,7 @@ public class ContactFXMLController implements Initializable {
                    contactTF.setText(String.valueOf(contactN));
                 }
                
-               pst.close();
+               
                
            } catch (SQLException e) {
                e.printStackTrace();
@@ -135,11 +150,10 @@ public class ContactFXMLController implements Initializable {
     private void loadTableRecord(){
         contact.clear();
 
-        String contactTableView = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts";
-
         try {
             statement = connection.createStatement();
-            rst = statement.executeQuery(contactTableView);
+            String defaultQuery = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts";
+            rst = statement.executeQuery(defaultQuery);
 
             while (rst.next()) {
                 Integer queryID = rst.getInt("ID");
@@ -287,7 +301,6 @@ public class ContactFXMLController implements Initializable {
                 cIDTF.setText("");
                
                 loadTableRecord();
-                pst.close();
             } catch(SQLException e){
                 e.printStackTrace();
             }
@@ -304,7 +317,7 @@ public class ContactFXMLController implements Initializable {
         
             try {
             
-                PreparedStatement pst = connection.prepareStatement("DELETE FROM Contacts WHERE ID = ?");
+                pst = connection.prepareStatement("DELETE FROM Contacts WHERE ID = ?");
                 pst.setInt(1, cID);
             
                 pst.executeUpdate();
@@ -316,7 +329,6 @@ public class ContactFXMLController implements Initializable {
                 cIDTF.setText("");
                
                 loadTableRecord();
-                pst.close();
                 
                 
             }
@@ -336,10 +348,74 @@ public class ContactFXMLController implements Initializable {
         fNameTF.setText("");
         contactTF.setText("");
         cIDTF.setText("");
-     
+        searchTF.setText("");
+        loadTableRecord();
     }
+    
+    private void executeSearchQuery(String query, String searchResult){
+        contact.clear();
+        try{
+            pst = connection.prepareStatement(query);
+            pst.setString(1, searchResult);
+            rst = pst.executeQuery();
+            while (rst.next()) {
+                Integer queryID = rst.getInt("ID");
+                String queryLName = rst.getString("last_name");
+                String queryFName = rst.getString("first_name");
+                Integer queryContact = rst.getInt("contact_no");
+                Date queryDateCreated = rst.getDate("date_created");
+                Date queryDateModified = rst.getDate("date_modified");
+
+                contact.add(new Contacts(queryID, queryLName, queryFName, queryContact, queryDateCreated, queryDateModified));
+            }
+            
+            
+            personIDColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
+            lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("last_name"));
+            firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("first_name"));
+            contactNoColumn.setCellValueFactory(new PropertyValueFactory<>("contact_no"));
+            dateAddedColumn.setCellValueFactory(new PropertyValueFactory<>("date_created"));
+            dateModifiedColumn.setCellValueFactory(new PropertyValueFactory<>("date_modified"));
+
+            contactTable.setItems(contact);
+            contactTable.refresh();
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
+    
 
     @FXML
-    private void categoryBoxClicked(MouseEvent event) {
+    private void searchTFHandler(ActionEvent event) {
+        String comboValue = categoryBox.getValue();
+        System.out.println(comboValue);
+        String searchQuery = searchTF.getText();
+        
+        //check combo box category
+        
+        if(comboValue.equals("First Name")){
+            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name = ?";
+        }
+        else if(comboValue.equals("Last Name")){
+            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name = ?";
+        }
+        else if(comboValue.equals("") || searchQuery.equals("")){
+            JOptionPane.showMessageDialog(null, "Select a Category or Input value First.");
+            loadTableRecord();
+            return;
+        }
+
+        executeSearchQuery(queryStatement,searchQuery);
     }
+
+
+    @FXML
+    private void categoryAction(ActionEvent event) {
+        System.out.println("Clicked");
+    }
+
+
+
 }
