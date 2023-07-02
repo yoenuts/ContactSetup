@@ -341,15 +341,10 @@ public class ContactFXMLController implements Initializable {
     }
 
 
-
+    
     @FXML
     private void clearAction(ActionEvent event) {
-        lNameTF.setText("");
-        fNameTF.setText("");
-        contactTF.setText("");
-        cIDTF.setText("");
-        searchTF.setText("");
-        loadTableRecord();
+        clear();
     }
     
     private void executeSearchQuery(String query, String searchResult){
@@ -392,20 +387,26 @@ public class ContactFXMLController implements Initializable {
         String comboValue = categoryBox.getValue();
         System.out.println(comboValue);
         String searchQuery = searchTF.getText();
+        if(searchQuery.equals("")){
+            clear();
+            return;
+        }
         
         //check combo box category
         
         if(comboValue.equals("First Name")){
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name = ?";
+            if(searchQuery.charAt(0) == '%'){
+                //char letter = searchQuery.charAt(0);
+                queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name LIKE = ?";
+                searchQuery = '%' + searchQuery.substring(2,3);
+                System.out.println(searchQuery);
+            }
         }
         else if(comboValue.equals("Last Name")){
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name = ?";
         }
-        else if(comboValue.equals("") || searchQuery.equals("")){
-            JOptionPane.showMessageDialog(null, "Select a Category or Input value First.");
-            loadTableRecord();
-            return;
-        }
+
 
         executeSearchQuery(queryStatement,searchQuery);
     }
@@ -416,6 +417,14 @@ public class ContactFXMLController implements Initializable {
         System.out.println("Clicked");
     }
 
-
+    private void clear(){
+        lNameTF.setText("");
+        fNameTF.setText("");
+        contactTF.setText("");
+        cIDTF.setText("");
+        searchTF.setText("");
+        categoryBox.getSelectionModel().clearSelection();
+        loadTableRecord();
+    }
 
 }
