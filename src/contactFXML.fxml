@@ -19,8 +19,8 @@
       <TableView fx:id="contactTable" layoutX="17.0" layoutY="171.0" onMouseClicked="#contactTableClicked" prefHeight="200.0" prefWidth="567.0">
         <columns>
           <TableColumn fx:id="personIDColumn" prefWidth="79.0" text="ID" />
-          <TableColumn fx:id="firstNameColumn" prefWidth="71.0" text="First Name" />
-            <TableColumn fx:id="lastNameColumn" prefWidth="99.0" text="Last Name" />
+          <TableColumn fx:id="firstNameColumn" prefWidth="71.0" text="Last Name" />
+            <TableColumn fx:id="lastNameColumn" prefWidth="99.0" text="First Name" />
             <TableColumn fx:id="contactNoColumn" prefWidth="106.0" text="Contact No." />
             <TableColumn fx:id="dateAddedColumn" prefWidth="106.0" text="Date Added" />
             <TableColumn fx:id="dateModifiedColumn" prefWidth="105.0" text="Date Modified" />
@@ -35,8 +35,8 @@
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Label>
-      <TextField fx:id="searchTF" layoutX="429.0" layoutY="135.0" />
+      <TextField fx:id="searchTF" layoutX="429.0" layoutY="135.0" onAction="#searchTFHandler" />
       <Button fx:id="clearB" layoutX="169.0" layoutY="24.0" mnemonicParsing="false" onAction="#clearAction" text="CLEAR ALL" />
-      <ComboBox fx:id="categoryBox" layoutX="428.0" layoutY="101.0" prefWidth="150.0" />
+      <ComboBox fx:id="categoryBox" layoutX="428.0" layoutY="101.0" onAction="#categoryAction" prefWidth="150.0" />
    </children>
 </AnchorPane>

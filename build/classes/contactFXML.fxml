@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -18,23 +19,24 @@
       <TableView fx:id="contactTable" layoutX="17.0" layoutY="171.0" onMouseClicked="#contactTableClicked" prefHeight="200.0" prefWidth="567.0">
         <columns>
           <TableColumn fx:id="personIDColumn" prefWidth="79.0" text="ID" />
-          <TableColumn fx:id="firstNameColumn" prefWidth="71.0" text="First Name" />
-            <TableColumn fx:id="lastNameColumn" prefWidth="99.0" text="Last Name" />
+          <TableColumn fx:id="firstNameColumn" prefWidth="71.0" text="Last Name" />
+            <TableColumn fx:id="lastNameColumn" prefWidth="99.0" text="First Name" />
             <TableColumn fx:id="contactNoColumn" prefWidth="106.0" text="Contact No." />
             <TableColumn fx:id="dateAddedColumn" prefWidth="106.0" text="Date Added" />
             <TableColumn fx:id="dateModifiedColumn" prefWidth="105.0" text="Date Modified" />
         </columns>
       </TableView>
       <Label layoutX="39.0" layoutY="130.0" text="Contact:" />
-      <Button fx:id="addB" layoutX="280.0" layoutY="54.0" mnemonicParsing="false" onAction="#addAction" text="ADD" />
+      <Button fx:id="addB" layoutX="291.0" layoutY="54.0" mnemonicParsing="false" onAction="#addAction" text="ADD" />
       <Button fx:id="updateB" layoutX="282.0" layoutY="88.0" mnemonicParsing="false" onAction="#updateAction" text="UPDATE" />
       <Button fx:id="deleteB" layoutX="284.0" layoutY="126.0" mnemonicParsing="false" onAction="#deleteAction" text="DELETE" />
-      <TextField fx:id="cIDTF" layoutX="94.0" layoutY="24.0" prefHeight="25.0" prefWidth="70.0" />
+      <TextField fx:id="cIDTF" editable="false" layoutX="94.0" layoutY="24.0" prefHeight="25.0" prefWidth="70.0" />
       <Label layoutX="23.0" layoutY="28.0" text="Contact ID">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Label>
-      <TextField fx:id="searchTF" layoutX="428.0" layoutY="139.0" />
-      <Button fx:id="clearB" layoutX="169.0" layoutY="24.0" mnemonicParsing="false" onAction="#clearAction" text="CLEAR" />
+      <TextField fx:id="searchTF" layoutX="429.0" layoutY="135.0" onAction="#searchTFHandler" />
+      <Button fx:id="clearB" layoutX="169.0" layoutY="24.0" mnemonicParsing="false" onAction="#clearAction" text="CLEAR ALL" />
+      <ComboBox fx:id="categoryBox" layoutX="428.0" layoutY="101.0" onAction="#categoryAction" prefWidth="150.0" />
    </children>
 </AnchorPane>
