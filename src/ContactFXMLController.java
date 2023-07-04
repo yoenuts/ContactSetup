@@ -396,37 +396,44 @@ public class ContactFXMLController implements Initializable {
         
         if(comboValue.equals("First Name")){
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name = ?";
-            if(searchQuery.charAt(0) == '%'){
+            
+            if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
                 //char letter = searchQuery.charAt(0);
                 queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name LIKE ?";
-                searchQuery = '%' + searchQuery.substring(1,2);
-                System.out.println(searchQuery);
-            }
-            else if(searchQuery.charAt(searchQuery.length() - 1) == '%'){
-                queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name LIKE ?";
-                searchQuery = searchQuery.substring(0,1) + '%';
                 System.out.println(searchQuery);
             }
             /*
-            else if(searchQuery.substring(searchQuery.length() - 1, searchQuery.length()).equals("%")){
-                
-            }
-            */
-            
-        }
-        else if(comboValue.equals("Last Name")){
-            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name = ?";
-            if(searchQuery.charAt(0) == '%'){
-                //char letter = searchQuery.charAt(0);
-                queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name LIKE ?";
-                searchQuery = '%' + searchQuery.substring(1,2);
+            else if(searchQuery.charAt(searchQuery.length() - 1) == '%'){
+                queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name LIKE ?";
+                searchQuery = searchQuery.substring(0,1) + '%';
                 System.out.println(searchQuery);
             }
-            else if(searchQuery.charAt(searchQuery.length() - 1) == '%'){
+            else if(searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%'){
                 queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name LIKE ?";
                 searchQuery = searchQuery.substring(0,1) + '%';
                 System.out.println(searchQuery);
             }
+            */
+        }
+        
+        else if(comboValue.equals("Last Name")){
+            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name = ?";
+            if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
+                queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name LIKE ?";
+                System.out.println(searchQuery);
+            }
+            /*
+            else if(searchQuery.charAt(searchQuery.length() - 1) == '%'){
+                queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name LIKE ?";
+                //searchQuery = searchQuery.substring(0,1) + '%';
+                System.out.println(searchQuery);
+            }
+            else if(searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%'){
+                queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE last_name LIKE ?";
+                //searchQuery = 
+                System.out.println(searchQuery);
+            }
+            */
         }
 
 
