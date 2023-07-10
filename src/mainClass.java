@@ -21,8 +21,8 @@ public class mainClass extends Application{
             Parent root = loader.load();
             
             // Set the fixed width and height of the Stage
-            primaryStage.setWidth(630);
-            primaryStage.setHeight(450);
+            primaryStage.setWidth(1077);
+            primaryStage.setHeight(710);
             primaryStage.setResizable(false);
             primaryStage.setTitle("Contacts");
             
