@@ -319,13 +319,14 @@ public class ContactFXMLController implements Initializable {
         clear();
     }
     
+    //introducing, varargs (...)
     private void executeSearchQuery(String query, String... searchResult){
         contact.clear();
         try{
             pst = connection.prepareStatement(query);
-            /**
-            pst.setString(1, searchResult);
-            */
+            for (int i = 0; i < searchResult.length; i++) {
+                pst.setString(i + 1, searchResult[i]);
+            }
             rst = pst.executeQuery();
             while (rst.next()) {
                 Integer queryID = rst.getInt("ID");
@@ -401,14 +402,46 @@ public class ContactFXMLController implements Initializable {
             return;
         }
         
-        //check if date picker and date category is not empty
+        //check if both date picker and date category not empty
         if(dateFilter != null && dCategory != null){
-            //check if may laman din yung nasa baba
-            if(comboValue != null){
+            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE ";
+            // if there is a date category
+            if(dCategory.equals("Before")){
+                queryStatement += "date_created < ?";
+            }
+            else if(dCategory.equals("After")){
+                queryStatement += "date_created > ?";
+            }
+            else{
+                queryStatement += "date_created = ?";
+            }
+            
+  
+            //check if user is looking for something more specific
+            if(comboValue != null && !(searchQuery.equals(""))){
                 
+                if(comboValue.equals("Last Name")){
+                    queryStatement += " AND last_name = ?";
+                }
+                else{
+                    queryStatement += " AND first_name = ?";
+                }
+                //executeSearchQuery(queryStatement,dateFilter,comboValue);
             } 
         }
-        else if(dateFilter != null && dCategory == null){
+        else if(dateFilter != null && dCategory == null){ //if there is date but no category
+            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE date_created = ?";
+            //check if combo box and search box has value next to it
+            if(comboValue != null && !(searchQuery.equals(""))){
+                
+                if(comboValue.equals("Last Name")){
+                    queryStatement += " AND last_name = ?";
+                }
+                else{
+                    queryStatement += " AND first_name = ?";
+                }
+            }
+            
             
         }
         else{
@@ -430,9 +463,10 @@ public class ContactFXMLController implements Initializable {
                     queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name LIKE ?";
                 }
             }
-        }
+            
             executeSearchQuery(queryStatement,searchQuery);
         }
+            
 
     }
     
