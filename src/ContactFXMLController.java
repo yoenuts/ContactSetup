@@ -117,7 +117,7 @@ public class ContactFXMLController implements Initializable {
            dateCategory.getItems().clear();
            
             ObservableList<String> dates = FXCollections.observableArrayList("Before", "After");
-            categoryBox.setItems(dates);
+            dateCategory.setItems(dates);
         });
         
 
@@ -325,7 +325,13 @@ public class ContactFXMLController implements Initializable {
         try{
             pst = connection.prepareStatement(query);
             for (int i = 0; i < searchResult.length; i++) {
-                pst.setString(i + 1, searchResult[i]);
+                if(){ // check kung date data type tas parse
+                    Date date1 = new Date.parse(searchResult[i]);
+                    pst.setDate(i + 1, date1);
+                }
+                else{
+                    pst.setString(i + 1, searchResult[i]);
+                }
             }
             rst = pst.executeQuery();
             while (rst.next()) {
@@ -384,7 +390,6 @@ public class ContactFXMLController implements Initializable {
         LocalDate local = datePicker.getValue();
         dateFilter = Date.valueOf(local);
         
-        
         String categoryValue = categoryBox.getValue();
         
         //get date category from combo box
@@ -406,28 +411,40 @@ public class ContactFXMLController implements Initializable {
         if(dateFilter != null && dCategory != null){
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE ";
             // if there is a date category
-            if(dCategory.equals("Before")){
-                queryStatement += "date_created < ?";
-            }
-            else if(dCategory.equals("After")){
-                queryStatement += "date_created > ?";
-            }
-            else{
-                queryStatement += "date_created = ?";
-            }
-            
-  
-            //check if user is looking for something more specific
-            if(comboValue != null && !(searchQuery.equals(""))){
-                
-                if(comboValue.equals("Last Name")){
-                    queryStatement += " AND last_name = ?";
+            if(!dCategory.equals("") && comboValue != null && !(searchQuery.equals(""))){
+                //check kung may laman 
+                if(dCategory.equals("Before")){
+                    queryStatement += "date_created < ?";
+                }
+                else if(dCategory.equals("After")){
+                    queryStatement += "date_created > ?";
                 }
                 else{
-                    queryStatement += " AND first_name = ?";
+                    queryStatement += "date_created = ?";
                 }
-                //executeSearchQuery(queryStatement,dateFilter,comboValue);
-            } 
+
+               //check if user is looking for something more specific
+                if(comboValue.equals("Last Name")){
+                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
+                        //char letter = searchQuery.charAt(0);
+                        queryStatement += " AND last_name LIKE = ?";
+                    }
+                    else{
+                       queryStatement += " AND last_name = ?"; 
+                    }
+                }
+                else if(comboValue.equals("First Name")){
+                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
+                        //char letter = searchQuery.charAt(0);
+                        queryStatement += " AND first_name LIKE = ?";
+                    }
+                    else{
+                       queryStatement += " AND first_name = ?"; 
+                    }
+                }
+                
+                executeSearchQuery(queryStatement, dCategory, comboValue, searchQuery);
+            }
         }
         else if(dateFilter != null && dCategory == null){ //if there is date but no category
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE date_created = ?";
@@ -435,14 +452,26 @@ public class ContactFXMLController implements Initializable {
             if(comboValue != null && !(searchQuery.equals(""))){
                 
                 if(comboValue.equals("Last Name")){
-                    queryStatement += " AND last_name = ?";
+                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
+                        //char letter = searchQuery.charAt(0);
+                        queryStatement += " AND last_name LIKE = ?";
+                    }
+                    else{
+                       queryStatement += " AND last_name = ?"; 
+                    }
                 }
-                else{
-                    queryStatement += " AND first_name = ?";
+                else if(comboValue.equals("First Name")){
+                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
+                        //char letter = searchQuery.charAt(0);
+                        queryStatement += " AND first_name LIKE = ?";
+                    }
+                    else{
+                       queryStatement += " AND first_name = ?"; 
+                    }
                 }
+                executeSearchQuery(queryStatement, dCategory,searchQuery);
+              
             }
-            
-            
         }
         else{
             //usual search name, last name
@@ -465,9 +494,12 @@ public class ContactFXMLController implements Initializable {
             }
             
             executeSearchQuery(queryStatement,searchQuery);
-        }
-            
+        }          
+    }
 
+    @FXML
+    private void dateCategoryAction(ActionEvent event) {
+        System.out.println("I was clicked!");
     }
     
 

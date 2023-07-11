@@ -58,7 +58,7 @@
                         <ComboBox fx:id="categoryBox" layoutX="38.0" layoutY="74.0" onAction="#categoryAction" prefWidth="150.0" />
                         <TextField fx:id="searchTF" layoutX="198.0" layoutY="74.0" />
                         <Button layoutX="434.0" layoutY="182.0" mnemonicParsing="false" text="SEARCH" />
-                        <ComboBox fx:id="dateCategory" layoutX="198.0" layoutY="23.0" prefWidth="150.0" />
+                        <ComboBox fx:id="dateCategory" layoutX="198.0" layoutY="23.0" onAction="#dateCategoryAction" prefWidth="150.0" />
                      </children>
                   </AnchorPane>
             </content>
