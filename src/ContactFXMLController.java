@@ -3,8 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
  */
 
+
 import java.sql.*;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
@@ -18,7 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
-
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,9 +91,12 @@ public class ContactFXMLController implements Initializable {
     private Button clearB;
     @FXML
     private ComboBox<String> categoryBox;
+    @FXML
     private DatePicker datePicker;
     @FXML
     private ComboBox<String> dateCategory;
+    @FXML
+    private Button searchB;
 
     
 
@@ -325,12 +330,13 @@ public class ContactFXMLController implements Initializable {
         try{
             pst = connection.prepareStatement(query);
             for (int i = 0; i < searchResult.length; i++) {
-                if(){ // check kung date data type tas parse
-                    Date date1 = new Date.parse(searchResult[i]);
-                    pst.setDate(i + 1, date1);
-                }
-                else{
-                    pst.setString(i + 1, searchResult[i]);
+                String result = searchResult[i];
+                try {
+                    java.sql.Date thisDate = java.sql.Date.valueOf(result);
+                    pst.setDate(i + 1, thisDate);
+                    
+                }catch (IllegalArgumentException e) {
+                    pst.setString(i + 1, result);
                 }
             }
             rst = pst.executeQuery();
@@ -378,23 +384,32 @@ public class ContactFXMLController implements Initializable {
     }
     
     //Filter search
-    private void searchB(ActionEvent event) {
+    @FXML
+    private void dateCategoryAction(ActionEvent event) {
+        System.out.println("I was clicked!");
+    }
+
+    @FXML
+    private void searchFilter(ActionEvent event) {
         /*
         1.) Search with date only 
         2.) Search using last name and first name
         3.) Search date with category (Before and After)
         4.) Search date with first/last name LIKE
         */
-
+        System.out.println("Search button is working!");
         //get values from datepicker
         LocalDate local = datePicker.getValue();
         dateFilter = Date.valueOf(local);
         
+        //convert date to string
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Define the desired date format
+        String sDateFilter = sdf.format(dateFilter); 
+        System.out.println(sDateFilter);
         String categoryValue = categoryBox.getValue();
         
         //get date category from combo box
         String dCategory = dateCategory.getValue();
-        System.out.println(dateFilter);
         
         //get contact category from combo box
         String comboValue = categoryBox.getValue();
@@ -408,13 +423,16 @@ public class ContactFXMLController implements Initializable {
         }
         
         //check if both date picker and date category not empty
-        if(dateFilter != null && dCategory != null){
+        if(!datePicker.getValue().equals("") && !dCategory.isEmpty()){
+            System.out.println("not null!");
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE ";
             // if there is a date category
-            if(!dCategory.equals("") && comboValue != null && !(searchQuery.equals(""))){
+            if(!comboValue.equals("") && !(searchQuery.equals(""))){
                 //check kung may laman 
+                System.out.println("not null again!");
                 if(dCategory.equals("Before")){
                     queryStatement += "date_created < ?";
+                    System.out.println("Selected before");
                 }
                 else if(dCategory.equals("After")){
                     queryStatement += "date_created > ?";
@@ -431,6 +449,7 @@ public class ContactFXMLController implements Initializable {
                     }
                     else{
                        queryStatement += " AND last_name = ?"; 
+                       System.out.println("Selected last name");
                     }
                 }
                 else if(comboValue.equals("First Name")){
@@ -443,10 +462,10 @@ public class ContactFXMLController implements Initializable {
                     }
                 }
                 
-                executeSearchQuery(queryStatement, dCategory, comboValue, searchQuery);
+                executeSearchQuery(queryStatement, sDateFilter, searchQuery);
             }
         }
-        else if(dateFilter != null && dCategory == null){ //if there is date but no category
+        else if(!datePicker.getValue().equals("") && dCategory == null){ //if there is date but no category
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE date_created = ?";
             //check if combo box and search box has value next to it
             if(comboValue != null && !(searchQuery.equals(""))){
@@ -494,12 +513,7 @@ public class ContactFXMLController implements Initializable {
             }
             
             executeSearchQuery(queryStatement,searchQuery);
-        }          
-    }
-
-    @FXML
-    private void dateCategoryAction(ActionEvent event) {
-        System.out.println("I was clicked!");
+        }           
     }
     
 
