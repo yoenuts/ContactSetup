@@ -317,7 +317,6 @@ public class ContactFXMLController implements Initializable {
         }
     }
 
-
     
     @FXML
     private void clearAction(ActionEvent event) {
@@ -391,122 +390,83 @@ public class ContactFXMLController implements Initializable {
 
     @FXML
     private void searchFilter(ActionEvent event) {
-        /*
-        1.) Search with date only 
-        2.) Search using last name and first name
-        3.) Search date with category (Before and After)
-        4.) Search date with first/last name LIKE
-        */
-        System.out.println("Search button is working!");
-        //get values from datepicker
+        System.out.println("Im working");
         LocalDate local = datePicker.getValue();
         dateFilter = Date.valueOf(local);
-        
         //convert date to string
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Define the desired date format
         String sDateFilter = sdf.format(dateFilter); 
-        System.out.println(sDateFilter);
-        String categoryValue = categoryBox.getValue();
         
-        //get date category from combo box
         String dCategory = dateCategory.getValue();
-        
-        //get contact category from combo box
         String comboValue = categoryBox.getValue();
-        
-        //get search text field for contents
         String searchQuery = searchTF.getText();
-        //if text field is empty then user wants to clear all selected object fields
-        if(searchQuery.equals("")){
-            clear();
-            return;
-        }
         
+
         //check if both date picker and date category not empty
-        if(!datePicker.getValue().equals("") && !dCategory.isEmpty()){
+        if(!datePicker.getValue().equals("") && !dCategory.isEmpty() && comboValue != null && !(searchQuery.isEmpty())){
             System.out.println("not null!");
             queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE ";
             // if there is a date category
-            if(!comboValue.equals("") && !(searchQuery.equals(""))){
-                //check kung may laman 
-                System.out.println("not null again!");
-                if(dCategory.equals("Before")){
-                    queryStatement += "date_created < ?";
-                    System.out.println("Selected before");
-                }
-                else if(dCategory.equals("After")){
-                    queryStatement += "date_created > ?";
+            if(dCategory.equals("Before")){    
+                queryStatement += "date_created < ?";
+            }
+            else if(dCategory.equals("After")){
+                queryStatement += "date_created > ?";  
+            }              
+            else{
+                queryStatement += "date_created = ?";
+            }
+
+            //check if user is looking for something more specific
+            if(comboValue.equals("Last Name")){
+                if((searchQuery.startsWith("%") || searchQuery.endsWith("%")) || (searchQuery.startsWith("%") && (searchQuery.endsWith("%")))){
+                    //char letter = searchQuery.charAt(0);
+                    queryStatement += " AND last_name LIKE = ?";
                 }
                 else{
-                    queryStatement += "date_created = ?";
+                   queryStatement += " AND last_name = ?"; 
                 }
-
-               //check if user is looking for something more specific
-                if(comboValue.equals("Last Name")){
-                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
-                        //char letter = searchQuery.charAt(0);
-                        queryStatement += " AND last_name LIKE = ?";
-                    }
-                    else{
-                       queryStatement += " AND last_name = ?"; 
-                       System.out.println("Selected last name");
-                    }
-                }
-                else if(comboValue.equals("First Name")){
-                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
-                        //char letter = searchQuery.charAt(0);
-                        queryStatement += " AND first_name LIKE = ?";
-                    }
-                    else{
-                       queryStatement += " AND first_name = ?"; 
-                    }
-                }
-                
-                executeSearchQuery(queryStatement, sDateFilter, searchQuery);
             }
+            else if(comboValue.equals("First Name")){
+                if((searchQuery.startsWith("%") || searchQuery.endsWith("%")) || (searchQuery.startsWith("%") && (searchQuery.endsWith("%")))){
+                    queryStatement += " AND first_name LIKE = ?";
+                }
+                else{
+                   queryStatement += " AND first_name = ?"; 
+                }
+            }
+                
+            executeSearchQuery(queryStatement, sDateFilter, searchQuery);
         }
-        else if(!datePicker.getValue().equals("") && dCategory == null){ //if there is date but no category
-            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE date_created = ?";
-            //check if combo box and search box has value next to it
-            if(comboValue != null && !(searchQuery.equals(""))){
-                
-                if(comboValue.equals("Last Name")){
-                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
-                        //char letter = searchQuery.charAt(0);
-                        queryStatement += " AND last_name LIKE = ?";
-                    }
-                    else{
-                       queryStatement += " AND last_name = ?"; 
-                    }
-                }
-                else if(comboValue.equals("First Name")){
-                    if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
-                        //char letter = searchQuery.charAt(0);
-                        queryStatement += " AND first_name LIKE = ?";
-                    }
-                    else{
-                       queryStatement += " AND first_name = ?"; 
-                    }
-                }
-                executeSearchQuery(queryStatement, dCategory,searchQuery);
-              
+        else if(comboValue == null  && searchQuery.isEmpty()){
+            queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE ";
+            System.out.println("peanuts");
+            if(dCategory.equals("Before")){
+                queryStatement += "date_created < ?";
             }
+            else if(dCategory.equals("After")){
+                queryStatement += "date_created > ?";
+            }
+            else{
+                queryStatement += "date_created = ?";
+            }
+                
+            executeSearchQuery(queryStatement, sDateFilter);
         }
         else{
             //usual search name, last name
-            if(comboValue.equals("First Name")){
+            if(comboValue.equals("First Name") && !searchQuery.equals("")){
                 queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name = ?";
                 //check for %
-                if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
+                if((searchQuery.startsWith("%") || searchQuery.endsWith("%")) || (searchQuery.startsWith("%") && (searchQuery.endsWith("%")))){
                     //char letter = searchQuery.charAt(0);
                     queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name LIKE ?";
-                
                 }
             }
-            else if(comboValue.equals("Last Name")){
+            else if(comboValue.equals("Last Name") && !searchQuery.equals("")){
                 queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name = ?";
                 //check for %
-                if((searchQuery.charAt(0) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%') || (searchQuery.charAt(searchQuery.length() - 1) == '%' && searchQuery.charAt(0) == '%')){
+                if((searchQuery.startsWith("%") || searchQuery.endsWith("%")) || (searchQuery.startsWith("%") && (searchQuery.endsWith("%")))){
                     //char letter = searchQuery.charAt(0);
                     queryStatement = "SELECT DISTINCT ID, first_name, last_name, contact_no, date_created, date_modified FROM Contacts WHERE first_name LIKE ?";
                 }
